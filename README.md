@@ -81,12 +81,72 @@ ls /sys/class/udc > UDC
 
 
 ## шевелим мышкой
+Засовываем в HID интерфейс мышы 6 байт.
+1 байт - 1 - относительные координаты, 2 - абсолютные
+2 байт всегда 0
+3 движение по горизонтали
+4 - по вертикали
+5,6 - как то связаны с нажатием кнопок
+
 ```python
 with open('/dev/hidg1', 'rb+') as hidg1:
      hidg1.write(b'\x01\x00\xff\x00\x00\x00') #move 1 pixel right
      hidg1.write(b'\x01\x00\x01\x00\x00\x00') #move 1 pixel left
 ```
 ## печатаем клавиатурой
+тут 8 байт. После нажатия кнопки её нужно еще отпускать 
+
+```python
+with open('/dev/hidg0', 'rb+') as hidg0:
+     hidg0.write(b'\x00\x00\x04\x00\x00\x00\x00\x00') #нажали А
+     hidg0.write(b'\x00\x00\x00\x00\x00\x00\x00\x00') #отпустили А
+```
+
+коды клавиш стр.53 http://www.usb.org/developers/hidpage/Hut1_12v2.pdf
+
+или ещё так
+```python
+#!/usr/bin/env python3
+NULL_CHAR = chr(0)
+
+def write_report(report):
+    with open('/dev/hidg0', 'rb+') as fd:
+        fd.write(report.encode())
+
+# Press a
+write_report(NULL_CHAR*2+chr(4)+NULL_CHAR*5)
+# Release keys
+write_report(NULL_CHAR*8)
+# Press SHIFT + a = A
+write_report(chr(32)+NULL_CHAR+chr(4)+NULL_CHAR*5)
+
+# Press b
+write_report(NULL_CHAR*2+chr(5)+NULL_CHAR*5)
+# Release keys
+write_report(NULL_CHAR*8)
+# Press SHIFT + b = B
+write_report(chr(32)+NULL_CHAR+chr(5)+NULL_CHAR*5)
+
+# Press SPACE key
+write_report(NULL_CHAR*2+chr(44)+NULL_CHAR*5)
+
+# Press c key
+write_report(NULL_CHAR*2+chr(6)+NULL_CHAR*5)
+# Press d key
+write_report(NULL_CHAR*2+chr(7)+NULL_CHAR*5)
+
+# Press RETURN/ENTER key
+write_report(NULL_CHAR*2+chr(40)+NULL_CHAR*5)
+
+# Press e key
+write_report(NULL_CHAR*2+chr(8)+NULL_CHAR*5)
+# Press f key
+write_report(NULL_CHAR*2+chr(9)+NULL_CHAR*5)
+
+# Release all keys
+write_report(NULL_CHAR*8)
+```
+(c) https://randomnerdtutorials.com/raspberry-pi-zero-usb-keyboard-hid/
 
 ## что ещё посмотреть
 https://github.com/RoganDawes/P4wnP1_aloa - из pi0w можно сделать еще и сетевую карту, чтобы давать команды напрямую. 
