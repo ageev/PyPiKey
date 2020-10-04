@@ -51,8 +51,8 @@ def main(*args):
         print('[INFO] no file specified, working with built-in text')
         text = TXT
 
-#    while True:
-    for i in text:
+    while True:
+        for i in text:
             type_to_hid(build_hid_report(i))
             time.sleep(random.randint(1,20)/10)
 
