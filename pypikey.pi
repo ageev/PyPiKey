@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# """Module docstring."""
+#"""PyPiKey works with Raspberry Pi Zero (W). It types text to a virtual USB HID Keyaboard"""
+# https://github.com/ageev/PyPiKey
 
 # Imports
 import os
@@ -7,20 +8,19 @@ import sys
 import time
 import random
 
-
 # Module Constants
 START_MESSAGE = "PyPiKey - USB HID Keyboard emulator for Pi Zero W"
-TXT = ".Eat this fresh french croissant! "
-KB_CODES = '****abcdefghijklmnopqrstuvwxyz1234567890**** **********.'
-SPACEBAR_CODE = 44
-DOT_CODE = 55
+TXT = "Eat this fresh french croissant. "
+
+# char possition in the list == char code. All codes here on p.53+ http://www.usb.org/developers/hidpage/Hut1_12v2.pdf
+KB_CODES = '****abcdefghijklmnopqrstuvwxyz1234567890**** **********.' 
 
 # Module "Global" Variables
 location = os.path.abspath(__file__)
 
-
 # Module Functions and Classes
 def type_to_hid(report):
+# You need to release the key after you 'typed' it
     release_key = chr(0) * 8
     with open('/dev/hidg0', 'rb+') as hidg0:
         hidg0.write(report.encode())
@@ -32,7 +32,6 @@ def build_hid_report(i):
     if char_code > 3:
         report = chr(0) * 2 + chr(char_code) + chr(0) * 5
     return report
-
 
 def main(*args):
     """My main script function.
