@@ -1,8 +1,63 @@
 #!/usr/bin/env python3
+# """Module docstring."""
 
-def shake_mouse():
-        with open('/dev/hidg1', 'rb+') as hidg1:
-                hidg1.write(b'\x01\x00\xff\x00\x00\x00') #move 1 pixel right
-                hidg1.write(b'\x01\x00\x01\x00\x00\x00') #move 1 pixel left
+# Imports
+import os
+import sys
+import time
+import random
 
-shake_mouse()
+
+# Module Constants
+START_MESSAGE = "PyPiKey - USB HID Keyboard emulator for Pi Zero W"
+TXT = ".Eat this fresh french croissant! "
+KB_CODES = '****abcdefghijklmnopqrstuvwxyz1234567890**** **********.'
+SPACEBAR_CODE = 44
+DOT_CODE = 55
+
+# Module "Global" Variables
+location = os.path.abspath(__file__)
+
+
+# Module Functions and Classes
+def type_to_hid(report):
+    release_key = chr(0) * 8
+    with open('/dev/hidg0', 'rb+') as hidg0:
+        hidg0.write(report.encode())
+        hidg0.write(release_key.encode())
+
+def build_hid_report(i):
+    char_code = KB_CODES.find(i.lower())
+    report = chr(0) * 8
+    if char_code > 3:
+        report = chr(0) * 2 + chr(char_code) + chr(0) * 5
+    return report
+
+
+def main(*args):
+    """My main script function.
+    """
+    print(START_MESSAGE)
+    print("Script Location:", location)
+    print("Arguments Passed:", args)
+    text = ''
+
+    try:
+        textfile = args[0]
+        print('[INFO] Working with the file', args[0])
+        with open(textfile, 'r') as f:
+            text = f.read() 
+    except:
+        print('[INFO] no file specified, working with built-in text')
+        text = TXT
+
+#    while True:
+    for i in text:
+            type_to_hid(build_hid_report(i))
+            time.sleep(random.randint(1,20)/10)
+
+
+# Check to see if this file is the "__main__" script being executed
+if __name__ == '__main__':
+    _, *script_args = sys.argv
+    main(*script_args)
