@@ -4,27 +4,27 @@
 ## Подготовка
 Вначале необходимо кое-что изменить в Pi0, чтобы плата стала определяться как USB клавиатура и мышь. 
 
-'''bash
+```bash
 pi@raspberrypi:~ $ echo "dtoverlay=dwc2" | sudo tee -a /boot/config.txt
 pi@raspberrypi:~ $ echo "dwc2" | sudo tee -a /etc/modules
 pi@raspberrypi:~ $ sudo echo "libcomposite" | sudo tee -a /etc/modules
 pi@raspberrypi:~ $ sudo touch /usr/bin/pypikey_usb
 pi@raspberrypi:~ $ sudo chmod +x /usr/bin/pypikey_usb
-'''
+```
 
 ## автозапуск
-'''
+```
 pi@raspberrypi:~ $ sudo nano /etc/rc.local
-'''
+```
 добавляем *над* exit 0
-'''
+```
 /usr/bin/pypikey_usb # libcomposite configuration
-'''
+```
 
 ## cоздаем гаджет
-'''
+```
 sudo nano /usr/bin/pypikey_usb
-'''
+```
 
 ## шевелим мышкой
 
