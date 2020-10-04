@@ -13,19 +13,19 @@ pi@raspberrypi:~ $ sudo chmod +x /usr/bin/pypikey_usb
 ```
 
 ## автозапуск
-```
+```bash
 pi@raspberrypi:~ $ sudo nano /etc/rc.local
 ```
 добавляем *над* exit 0
-```
+```bash
 /usr/bin/pypikey_usb # libcomposite configuration
 ```
 
 ## cоздаем гаджет
-```
+```bash
 sudo nano /usr/bin/pypikey_usb
 ```
-```
+```bash
 #!/bin/bash
 cd /sys/kernel/config/usb_gadget/
 mkdir -p pypikey
